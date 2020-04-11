@@ -1,0 +1,54 @@
+$ docker pull {image}
+: To fetch {image} from the Docker registry and saves it to your system.
+(e.g., $ docker pull busybox)
+
+$ docker images
+: To see a list of all images on your system.
+
+$ docker run
+: To run a docker container based on these images (e.g., $ docker run busybox)
+
+When we run docker run busybox, we didn't provide a command, 
+so the container booted up, ran an empty command and then exited.
+
+$ docker run busybox echo "hello from busybox"
+
+$ docker ps
+: To show you all containers that are currently running.
+
+$ docker ps -a
+: To see a list of all containers that you ran.
+
+$ docker run -it {image} sh
+: To run more than just one command in a container.
+(e.g., $ docker run -it busybox sh)
+
+$ ctrl + c 
+: To stop the container
+
+/ # exit
+: To detatch from the container and stops it once you have attached 
+to a Docker Container via a CMD console
+
+$ docker run --help
+: To see a list of all flags it supports.
+
+$ docker rm {containerID1 containerID2 ...}
+: To clean up containers once you are done with them.
+(e.g., $ docker rm 305297d7a235 ff0a5c3750b9)
+
+$ docker rm $(docker ps -a -q -f status=exited)
+: To delete all containers that have a status of exited.
+(the -q flag, only returns the numeric IDs 
+and -f filters output based on conditions provided.)
+
+$ docker run --rm {image}
+: To automatically delete the container once it's exited
+(e.g., $ docker run --rm busybox echo "hello world")
+
+$ docker container prune
+: (FOR LATER VERIONS OF DOCKER, 
+to delete all container that have a status of exited.)
+
+$ docker rmi {image}
+: To delete images that you no longer need ($ docker rmi busybox)
