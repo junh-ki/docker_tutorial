@@ -1,3 +1,5 @@
+# Basic Commands
+
 $ docker pull {image}
 : To fetch {image} from the Docker registry and saves it to your system.
 (e.g., $ docker pull busybox)
@@ -23,8 +25,12 @@ $ docker run -it {image} sh
 : To run more than just one command in a container.
 (e.g., $ docker run -it busybox sh)
 
+$ docker stop {containerID1 containerID2 ...}
+: To stop containers that are running.
+(e.g., docker stop 7d2da43a399e)
+
 $ ctrl + c 
-: To stop the container
+: To escape the container
 
 / # exit
 : To detatch from the container and stops it once you have attached 
@@ -52,3 +58,45 @@ to delete all container that have a status of exited.)
 
 $ docker rmi {image}
 : To delete images that you no longer need ($ docker rmi busybox)
+
+
+
+# Static Sites
+
+- Download and run the static sites image
+$ docker run --rm prakhar1989/static-site
+
+- Stop the container to get to know how to see the website, what port is it 
+running on, how do you access the container directly from your host machine
+(The client is not exposing any ports)
+Ctrl + c
+
+- Re-run the docker run command to publish ports and Detach your terminal 
+so that your terminal is not attached to the running container - Detached Mode/
+(This way, you can happily close your terminal and keep the container running.)
+(-d: detach your terminal / -p: publish all exposed ports to random ports /
+--name: a name you want to give to the image that you are publishing ports to)
+$ docker run -d -P --name static-site prakhar1989/static-site
+
+- See and confirm the ports that are published to the static-site image
+$ docker port static-site
+
+- You can open http://localhost:{port number}
+(e.g., http://localhost:32773/) - go with 80/tcp
+
+- You can also specify a custom port to which the client will forward connections 
+to the container
+$ docker run -p 8888:80 prakhar1989/static-site
+
+- To open static-site with the custom port, you need to know your Docker host's
+IP address. To find out your Docker host's IP address
+$ ip a
+
+- Navigate to 3: docker0: ...> inet 172.17.0.1 / this is the IP address.
+
+- You can not open static-site with the custom port(8888)
+(e.g., http://172.17.0.1:8888/)
+
+- To stop a detached container
+$ docker stop {containerID}
+(e.g., $ docker stop static-site / $ docker stop 9bc51c451b46)

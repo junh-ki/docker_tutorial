@@ -11,6 +11,10 @@ We create a container using docker run. (e.g., $ docker run busybox)
 A list of running containers can be seen using the docker ps command.
 (e.g., $ docker ps)
 
+- Docker Host: a physical system or virtual machine running Linux. 
+This can be your laptop, server or virtual machine in your data center, 
+or computing resource provided by a cloud provider.
+
 - Docker Daemon: The background service running on the host that manages
 building, running and distributing Docker containers.
 The daemon is the process that runs in the operating system
