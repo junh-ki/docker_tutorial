@@ -61,7 +61,7 @@ $ docker rmi {image}
 
 
 
-# Static Sites
+# Static Sites (How to run a webserver inside a Docker image)
 
 - Download and run the static sites image
 $ docker run --rm prakhar1989/static-site
