@@ -11,6 +11,21 @@ We create a container using docker run. (e.g., $ docker run busybox)
 A list of running containers can be seen using the docker ps command.
 (e.g., $ docker ps)
 
+- Docker Engine: Docker Engine is a client-server application with the following 
+components:
+    - A server which is a type of long-running program called a daemon process.
+        ($ dockerd ...)
+    - A REST API which specifies interfaces that programs can use to talk to
+        the daemon and instruct it what to do.
+    - A command line interface (CLI) client
+        ($ docker ...)
+![alt text](https://docs.docker.com/engine/images/engine-components-flow.png "Docker Engine")
+The CLI uses the Docker REST API to control or interact with the Docker daemon 
+through scripting or direct CLI commands. Many other Docker applications use the 
+underlying API and CLI.
+The Docker daemon creates and manages Docker objects, such as images, 
+containers, networks, and volumes.
+
 - Docker Host: a physical system or virtual machine running Linux. 
 This can be your laptop, server or virtual machine in your data center, 
 or computing resource provided by a cloud provider.

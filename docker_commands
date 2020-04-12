@@ -7,7 +7,7 @@ $ docker pull {image}
 $ docker images
 : To see a list of all images on your system.
 
-$ docker run
+$ docker run {image}
 : To run a docker container based on these images (e.g., $ docker run busybox)
 
 When we run docker run busybox, we didn't provide a command, 
