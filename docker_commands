@@ -1,5 +1,8 @@
 # Basic Commands
 
+$ docker login
+: To log into DockerHub
+
 $ docker search {image}
 : To search for images on Docker Hub (The Docker Registry) 
 directly from the command line. ($ docker search busybox)
@@ -148,9 +151,36 @@ CMD ["python", "./app.py"]
 - See if your image shows
 (e.g., $ docker images)
 
-- Run the image and see if it actually works
+- Run the image to see if it actually works
 (e.g., $ docker run -p 8888:5000 mrki102/catnip)
 
 - Open the web page
 (e.g., http://localhost:8888/)
 (e.g., http://172.17.0.1:8888/)
+
+
+
+
+
+<Docker on AWS with AWS Elastic Beanstalk>
+
+- Logging into DockerHub (If this is the first time you are pushing an image)
+(e.g., docker login)
+(Username: mrki102)
+(Password: *******************)
+
+- Publish your image on a registry (DockerHub) which can be accessed by AWS
+(e.g., $ docker push mrki102/catnip)
+
+- Check your published image on DockerHub
+(https://hub.docker.com/repository/docker/mrki102/catnip)
+
+- Now that your image is online, anyone who has docker installed can play with 
+your app by typing just a single command.
+(e.g., $ docker run -p 8888:5000 mrki102/catnip)
+
+- Now you can open the web page
+(e.g., http://localhost:8888/)
+(e.g., http://172.17.0.1:8888/)
+
+
