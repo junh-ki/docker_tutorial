@@ -65,7 +65,10 @@ $ docker rmi {image}
 
 
 
-# Static Sites (How to run a webserver inside a Docker image)
+
+
+<Static Sites>
+(How to run a webserver inside a Docker image)
 
 - Download and run the static sites image
 $ docker run --rm prakhar1989/static-site
@@ -107,7 +110,9 @@ $ docker stop {containerID}
 
 
 
-# Creating your own Docker image
+
+
+<Creating your own Docker image>
 
 - Clone the pre-made git repo (a Flask web app that displays a random car .gif)
 (e.g., $ git clone https://github.com/prakhar1989/docker-curriculum.git)
