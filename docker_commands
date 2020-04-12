@@ -104,3 +104,48 @@ $ ip a
 - To stop a detached container
 $ docker stop {containerID}
 (e.g., $ docker stop static-site / $ docker stop 9bc51c451b46)
+
+
+
+# Creating your own Docker image
+
+- Clone the pre-made git repo (a Flask web app that displays a random car .gif)
+(e.g., $ git clone https://github.com/prakhar1989/docker-curriculum.git)
+
+- Navigate to the repo folder
+(e.g., $ cd docker-curriculum/flask-app)
+
+- Make a new Dockerfile from scratch (plain txt file with the name "Dockerfile")
+:
+-----------------------------------------------------
+# specify your base image
+FROM python:3
+
+# set a directory for the app
+WORKDIR /usr/src/app
+
+# copy all the files to the container
+COPY . .
+
+# install dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# define the port number the container should expose
+EXPOSE 5000
+
+# run the command
+CMD ["python", "./app.py"]
+-----------------------------------------------------
+
+- In the same directory ($ cd docker-curriculum/flask-app), command docker build
+(e.g., $ docker build -t mrki102/catnip .)
+
+- See if your image shows
+(e.g., $ docker images)
+
+- Run the image and see if it actually works
+(e.g., $ docker run -p 8888:5000 mrki102/catnip)
+
+- Open the web page
+(e.g., http://localhost:8888/)
+(e.g., http://172.17.0.1:8888/)

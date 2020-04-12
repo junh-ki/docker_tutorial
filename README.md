@@ -54,3 +54,8 @@ Kitematic which provide a GUI to the users.
 - Docker Hub: A registry of Docker images. You can think of the registry 
 as a directory of all available Docker images. If required, one can host 
 their own Docker registries and can use them for pulling images.
+
+
+- Dockerfile: A Dockerfile is a simple text file that contains a list of 
+commands that the Docker client calls while creating an image. It's a simple way 
+to automate the image creation process.
