@@ -1,5 +1,9 @@
 # Basic Commands
 
+$ docker search {image}
+: To search for images directly from the command line.
+($ docker search busybox)
+
 $ docker pull {image}
 : To fetch {image} from the Docker registry and saves it to your system.
 (e.g., $ docker pull busybox)

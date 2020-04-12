@@ -5,6 +5,18 @@
 - Images: The blueprints of our application which form the basis of containers. 
 An image can be downloaded with the docker pull command.
 (e.g., $ docker pull busybox)
+    - Base images: images that have no parent image, usually OS like images, 
+    such as ubuntu, busybox or debian.
+    - Child images: images that build on base images and add additional 
+    functionality.
+
+    - Official images: images that are officially maintained and supported by 
+    the folks at Docker. These are typically one word long. 
+    In the list of images above, the python, ubuntu, busybox 
+    and hello-world images are official images.
+    - User images: images created and shared by users like you. 
+    They build on base images and add additional functionality. 
+    Typically, these are formatted as user/image-name.
 
 - Containers: Created from Docker images and run the actual application.
 We create a container using docker run. (e.g., $ docker run busybox)
