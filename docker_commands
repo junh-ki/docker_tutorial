@@ -74,5 +74,9 @@ $ docker network ls
 : To see a list of network IDs
 
 $ docker network inspect {IP name}
-: TO inspect the network.
+: To inspect the network.
 (e.g., $ docker network inspect bridge)
+
+$ docker network create {newwork name - you define}
+: To create a new isolated bridge network
+(e.g., docker network create foodtrucks-net)
