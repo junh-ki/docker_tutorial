@@ -152,7 +152,7 @@ application and docker configuration.
   "Logging": "/var/log/nginx"
 }
 -------------------------------
-We provide the name of the image that EB should use along with a port that the 
+You provide the name of the image that EB should use along with a port that the 
 container should open.
 
 - When setup is done, your instance is ready. Head over to the EB page 

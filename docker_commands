@@ -17,7 +17,7 @@ $ docker images
 $ docker run {image}
 : To run a docker container based on these images (e.g., $ docker run busybox)
 
-When we run docker run busybox, we didn't provide a command, 
+When you run docker run busybox, you didn't provide a command, 
 so the container booted up, ran an empty command and then exited.
 
 $ docker run busybox echo "hello from busybox"

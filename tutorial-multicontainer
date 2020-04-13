@@ -74,9 +74,9 @@ EXPOSE 5000
 CMD ["python", "./app.py"]
 -----------------------------------------------------
 
-* apart from installing Python dependencies via pip, we want our application to 
+* apart from installing Python dependencies via pip, you want our application to 
 also generate our minified Javascript file for production. For this, we'll 
-require Nodejs. Since we need a custom build step, we'll start from the ubuntu 
+require Nodejs. Since you need a custom build step, we'll start from the ubuntu 
 base image to build our Dockerfile from scratch.
 
 (Dockerfile)
@@ -115,13 +115,13 @@ New things:
 1. Use the package manager apt-get to install the dependencies namely Python and Node.
 2. The yqq flag is used to suppress output and assumes "Yes" to all prompts.
 3. The ADD command to copy your application into a new volume in the container 
-- /opt/flask-app. This is where your code will reside. We also set this as your 
+- /opt/flask-app. This is where your code will reside. Yiy also set this as your 
 working directory, so that the following commands will be run in the context of 
-this location. Now that your system-wide dependencies are installed, we get 
-around to installing app-specific ones. First off we tackle Node by installing 
+this location. Now that your system-wide dependencies are installed, you get 
+around to installing app-specific ones. First off you tackle Node by installing 
 the packages from npm and running the build command as defined in your 
-package.json file. We finish the file off by installing the Python packages, 
-exposing the port and defining the CMD to run as we did in the last section.
+package.json file. You finish the file off by installing the Python packages, 
+exposing the port and defining the CMD to run as you did in the last section.
 
 * You are supposed to make a Docker Image that takes care of the Python 
 application (the "flask-app" folder) and Elasticsearch(the "utils" folder) -> 
@@ -156,7 +156,7 @@ to connect and talk to ES if you can tell your Flask app to connect to this URL.
 find "es = Elasticsearch(host='es')". This is the details that define the 
 connection.
 
-- To make this work, we need to tell the Flask container that the ES container 
+- To make this work, you need to tell the Flask container that the ES container 
 is running on "0.0.0.0" host (the port by default is "9200"). But this is wrong.
 "0.0.0.0" is the IP to access ES container from the host machine (i.e., from 
 your laptop). Another container will not be able to access this on the same IP 
@@ -183,7 +183,7 @@ indeed talk to ES on "172.17.0.2:9200".
 (e.g., .../flask-app# exit)
 
 - You still have to figure out two problems.
-1. How do we tell the Flask container that "es" hostname stands for 
+1. How do you tell the Flask container that "es" hostname stands for 
 "172.17.0.2:9200" or some other IP since the IP address can change?
 2. Since the bridge network is shared by every container by default, this 
 approach is not secure. How do you isolate your network?
