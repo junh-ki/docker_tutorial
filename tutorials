@@ -312,3 +312,30 @@ container about the other container and get them to talk to each other.
 
 # <Docker Network>
 
+- See what container do you have
+($ docker container ls)
+
+- Confirm that the "docker.elastic.co/elasticsearch/..." container is running.
+The container is running on "0.0.0.0:9200 port". Meaning that it should be able 
+to connect and talk to ES if you can tell your Flask app to connect to this URL.
+
+- Go to ($ cd FoodTrucks/flask-app) and open "app.py" On the line 8, you can 
+find "es = Elasticsearch(host='es')". This is the details that define the 
+connection.
+
+- To make this work, we need to tell the Flask container that the ES container 
+is running on "0.0.0.0" host (the port by default is "9200"). But this is wrong.
+"0.0.0.0" is the IP to access ES container from the host machine (i.e., from 
+your laptop). Another container will not be able to access this on the same IP 
+address.
+
+- See all Network IDs and find the ID with the name of "bridge". That is the 
+network in whcih containers are run by default. Meaning that when the ES 
+container is running, it is in this bridge network.
+(e.g., $ docker network ls)
+
+- Inspect the network to validate this.
+(e.g., $ docker network inspect bridge)
+
+
+
