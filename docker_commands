@@ -22,6 +22,9 @@ so the container booted up, ran an empty command and then exited.
 
 $ docker run busybox echo "hello from busybox"
 
+$ docker container ls
+: To see a list of container you have.
+
 $ docker ps
 : To show you all containers that are currently running.
 

@@ -160,3 +160,155 @@ and you should see a green tick indicating that your app is alive and kicking.
 
 - Go ahead and open the URL in your browser and feel free to share with others.
 (e.g., http://catgif-env.eba-77ksepzu.eu-west-2.elasticbeanstalk.com/)
+
+
+
+
+
+<Multi-Container Environment>
+How to Dockerize applications which rely on different services to run such as 
+web apps that require a database. In particular, how you can run and manage 
+multi-container environments.
+
+
+
+# <SF Food Trucks>
+The app's backend is written in Python (Flask) and for search it uses 
+Elasticsearch.
+
+- Clone the repository
+(e.g., $ git clone https://github.com/prakhar1989/FoodTrucks)
+
+- The "flask-app" folder contains the Python application, while the "utils" 
+folder has some utilities to load the data into Elasticsearch.
+
+- The application consists of a Flask backend server and an Elasticsearch 
+service. A natural way to split this app would be to have two containers - 
+1. One running the Flask process 
+2. Another running the Elasticsearch (ES) process.
+
+- The Flask container is already built in the repository.
+
+- For Elasticsearch, you can find something on the hub.
+(e.g., $ docker search elasticsearch)
+
+- Pull the image (Elastic, the company behind Elasticsearch maintains its own 
+registry for Elastic products. It's recommended to use the images from that 
+registry if you plan to use Elasticsearch - https://www.docker.elastic.co/)
+(e.g., docker pull docker.elastic.co/elasticsearch/elasticsearch:6.3.2)
+
+- Run it in development mode by specifying ports and setting an environment 
+variable that configures the Elasticsearch cluster ro run as a single-node.
+(e.g., $ docker run -d --name es -p 9200:9200 -p 9300:9300 -e "discovery.type=
+single-node" docker.elastic.co/elasticsearch/elasticsearch:6.3.2)
+(--name es: to give our container a name which makes it easy to use in 
+subsequent commands)
+
+- Once the container is started, you can see the logs by running 
+"$ docker container logs" with the container name (or ID) to inspect the logs.
+($ docker container ls) - to see a list of containers you have
+($ docker container logs es)
+
+- See if you can send a request to the ELasticsearch container.
+User the 9200 port to send a cURL request to the container.
+(* curl is a command line tool to transfer data to or from a server, using any 
+of the supported protocols (HTTP, FTP, IMAP, POP3, SCP, SFTP, SMTP, TFTP, 
+TELNET, LDAP or FILE...)
+(e.g., $ curl 0.0.0.0:9200)
+
+- Now you have to create a Docker Image of the Flask app. You can create a 
+Docker Image with a Dockerfile. Go to FoodTrucks folder ($ cd FoodTrucks) and 
+you can find the Dockerfile.
+
+(Dockerfile in the previous tutorial)
+-----------------------------------------------------
+# specify your base image
+FROM python:3
+
+# set a directory for the app
+WORKDIR /usr/src/app
+
+# copy all the files to the container
+COPY . .
+
+# install dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# define the port number the container should expose
+EXPOSE 5000
+
+# run the command
+CMD ["python", "./app.py"]
+-----------------------------------------------------
+
+* apart from installing Python dependencies via pip, we want our application to 
+also generate our minified Javascript file for production. For this, we'll 
+require Nodejs. Since we need a custom build step, we'll start from the ubuntu 
+base image to build our Dockerfile from scratch.
+
+(Dockerfile)
+---------------------------------------------------------
+# specify your base image
+FROM ubuntu:latest
+
+LABEL maintainer="Prakhar Srivastav <prakhar@prakhar.me>"
+
+# install system-wide deps for python and node
+RUN apt-get -yqq update
+RUN apt-get -yqq install python-pip python-dev curl gnupg
+RUN curl -sL https://deb.nodesource.com/setup_10.x | bash
+RUN apt-get install -yq nodejs
+
+# copy our application code
+ADD flask-app /opt/flask-app
+WORKDIR /opt/flask-app
+
+# fetch app specific deps (install dependencies)
+RUN npm install
+RUN npm run build
+RUN pip install -r requirements.txt
+
+# define the port number the container should expose
+EXPOSE 5000
+
+# run the command
+CMD [ "python", "./app.py" ]
+---------------------------------------------------------
+
+* If you find that an existing image doesn't cater to your needs, feel free to 
+start from another base image on DockerHub and tweak it yourself.
+
+New things:
+1. Use the package manager apt-get to install the dependencies namely Python and Node.
+2. The yqq flag is used to suppress output and assumes "Yes" to all prompts.
+3. The ADD command to copy your application into a new volume in the container 
+- /opt/flask-app. This is where your code will reside. We also set this as your 
+working directory, so that the following commands will be run in the context of 
+this location. Now that your system-wide dependencies are installed, we get 
+around to installing app-specific ones. First off we tackle Node by installing 
+the packages from npm and running the build command as defined in your 
+package.json file. We finish the file off by installing the Python packages, 
+exposing the port and defining the CMD to run as we did in the last section.
+
+* You are supposed to make a Docker Image that takes care of the Python 
+application (the "flask-app" folder) and Elasticsearch(the "utils" folder) -> 
+therefore, the DOckerfile needs to be placed in the context of FoodTrucks that 
+contains both folders.
+
+- In the same directory ($ cd FoodTrucks), command docker build
+(e.g., $ docker build -t mrki102/foodtrucks-web .)
+
+- See if your image shows
+(e.g., $ docker images)
+
+- Run the image to see if it actually works
+(e.g., $ docker run -P --rm mrki102/foodtrucks-web)
+
+- Confirm that the flask app is not able to run since it was unable to connect 
+to Elasticsearch. In the following part, you will get to know how to tell one 
+container about the other container and get them to talk to each other.
+
+
+
+# <Docker Network>
+
