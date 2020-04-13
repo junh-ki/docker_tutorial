@@ -334,8 +334,29 @@ network in whcih containers are run by default. Meaning that when the ES
 container is running, it is in this bridge network.
 (e.g., $ docker network ls)
 
-- Inspect the network to validate this.
+- Inspect the network to validate this. confirm the "es" container is listed 
+under the "Container" section in the output. What you can also see is the IP 
+address. This container has been allotted - "172.17.0.2".
 (e.g., $ docker network inspect bridge)
 
+- Find out to see whether or not the IP address, "172.17.0.2", is what you are 
+looking for by trying to access this IP while running your flask container.
+(e.g., $ docker run -it --rm mrki102/foodtrucks-web bash) (then type this 
+...-app#: curl 172.17.0.2:9200) "bash" is to start the container in the 
+interactive mode with the bash process. Once you do this, you can if you can 
+indeed talk to ES on "172.17.0.2:9200".
 
+- escape from there
+(e.g., .../flask-app# exit)
 
+- You still have to figure out two problems.
+1. How do we tell the Flask container that "es" hostname stands for 
+"172.17.0.2:9200" or some other IP since the IP address can change?
+2. Since the bridge network is shared by every container by default, this 
+approach is not secure. How do you isolate your network?
+
+- Docker allows you to define your own networks while keep them isolated using 
+the "docker network" command
+($ docker network create foodtrucks-net)
+
+- 

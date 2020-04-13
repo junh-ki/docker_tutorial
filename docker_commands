@@ -32,6 +32,10 @@ $ docker run -it {image} sh
 : To run more than just one command in a container.
 (e.g., $ docker run -it busybox sh)
 
+$ docker run -it {image} bash
+: To start the container in the interactive mode with the "bash" process.
+(e.g., docker run -it --rm mrki102/foodtrucks-web bash)
+
 $ docker stop {containerID1 containerID2 ...}
 : To stop containers that are running.
 (e.g., docker stop 7d2da43a399e)
