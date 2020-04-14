@@ -249,3 +249,63 @@ $ git clone https://github.com/prakhar1989/FoodTrucks
 $ cd FoodTrucks
 $ ./setup-docker.sh
 -----------------------------------------------------
+
+
+
+# <Docker Compose>
+Compose is a tool that is used for defining and running multi-container Docker 
+apps in an easy way. It provides a configuration file called 
+"docker-compose.yml" taht can be used to bring up an application and the suite 
+of services it depends on with just one command.
+
+- See if you can create a "docker-compose.yml" for your SF-Foodtrucks app and 
+evaluate whether Docker Compose lives up to its promise.
+
+- Install Docker Compose.
+(e.g., $ pip install docker-compose)
+
+- Check the version of Docker Compose
+(e.g., $ docker-compose --version)
+
+* If you failed to install Docker Compose
+- 1. Download the Docker Compose binary into the /usr/local/bin directory with 
+the following curl command.
+(e.g., $ sudo curl -L "https://github.com/docker/compose/releases/download/
+1.23.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose)
+- 2. Once the download is complete, apply executable permissions to the Compose 
+binary.
+(e.g., $ sudo chmod +x /usr/local/bin/docker-compose)
+- 3. Verify the installation by running the following command which will display 
+the Compose version.
+(e.g., $ docker-compose --version)
+(Output: docker-compose version 1.23.1, build b02f1306)
+
+- Now that Docker Compose is installed, you can create "docker-compose.yml" in 
+the directory ($ cd FoodTrucks).
+docker-compose.yml
+--------------------------------------------------------------
+version: "3"
+services:
+    es:
+        image: docker.elastic.co/elasticsearch/elasticsearch:6.3.2
+        container_name: es
+        environment:
+            - discovery.type=single-node
+        ports:
+            - 9200:9200
+        volumes:
+            - esdata1:/usr/share/elasticsearch/data
+    web:
+        image: prakhar1989/foodtrucks-web
+        command: python app.py
+        depends_on:
+            - es
+        ports:
+            - 5000:5000
+        volumes:
+            - ./flask-app:/opt/flask-app
+volumes:
+    esdata1:
+        driver: local
+--------------------------------------------------------------
+
