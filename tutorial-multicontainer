@@ -34,7 +34,7 @@ registry if you plan to use Elasticsearch - https://www.docker.elastic.co/)
 variable that configures the Elasticsearch cluster ro run as a single-node.
 (e.g., $ docker run -d --name es -p 9200:9200 -p 9300:9300 -e "discovery.type=
 single-node" docker.elastic.co/elasticsearch/elasticsearch:6.3.2)
-(--name es: to give our container a name which makes it easy to use in 
+(--name es: to give your container a name which makes it easy to use in 
 subsequent commands)
 
 - Once the container is started, you can see the logs by running 
@@ -74,10 +74,10 @@ EXPOSE 5000
 CMD ["python", "./app.py"]
 -----------------------------------------------------
 
-* apart from installing Python dependencies via pip, you want our application to 
-also generate our minified Javascript file for production. For this, we'll 
+* apart from installing Python dependencies via pip, you want your application 
+to also generate your minified Javascript file for production. For this, we'll 
 require Nodejs. Since you need a custom build step, we'll start from the ubuntu 
-base image to build our Dockerfile from scratch.
+base image to build your Dockerfile from scratch.
 
 (Dockerfile)
 ---------------------------------------------------------
@@ -92,7 +92,7 @@ RUN apt-get -yqq install python-pip python-dev curl gnupg
 RUN curl -sL https://deb.nodesource.com/setup_10.x | bash
 RUN apt-get install -yq nodejs
 
-# copy our application code
+# copy your application code
 ADD flask-app /opt/flask-app
 WORKDIR /opt/flask-app
 
@@ -112,7 +112,8 @@ CMD [ "python", "./app.py" ]
 start from another base image on DockerHub and tweak it yourself.
 
 New things:
-1. Use the package manager apt-get to install the dependencies namely Python and Node.
+1. Use the package manager apt-get to install the dependencies namely Python and 
+Node.
 2. The yqq flag is used to suppress output and assumes "Yes" to all prompts.
 3. The ADD command to copy your application into a new volume in the container 
 - /opt/flask-app. This is where your code will reside. Yiy also set this as your 
@@ -282,8 +283,8 @@ the Compose version.
 
 - Now that Docker Compose is installed, you can create "docker-compose.yml" in 
 the directory ($ cd FoodTrucks).
-docker-compose.yml
---------------------------------------------------------------
+(docker-compose.yml)
+------------------------------------------------------------------
 version: "3"
 services:
     es:
@@ -296,7 +297,7 @@ services:
         volumes:
             - esdata1:/usr/share/elasticsearch/data
     web:
-        image: prakhar1989/foodtrucks-web
+        image: mrki102/foodtrucks-web
         command: python app.py
         depends_on:
             - es
@@ -307,5 +308,75 @@ services:
 volumes:
     esdata1:
         driver: local
---------------------------------------------------------------
+------------------------------------------------------------------
+At the parent level, you define the names of your services "es" and "web".
+You can add additional parameters out of which image is required for each 
+service that Docker needs to run. You provide more information about the 
+container with "command" and "ports". The "volumes" parameter specifies a mount 
+point in your web container where the code will reside. This is purely optional 
+and is useful if you need access to logs etc. You also add volumes for the "es" 
+container so that the data you load persists between restarts. You also specify 
+"depends_on", which tells docker to start the "es" container before web. 
+
+* You must be inside the directory with the "docker-compose.yml" file in order 
+to execute most Compose commands.
+
+- Before have "docker-compose" in action, make sure that the ports and names are 
+free by turning off the Flask and ES containers if they are still running.
+(e.g., $ docker stop es foodtrucks-web)
+(e.g., $ docker rm foodtrucks-web es)
+
+- And also push your mrki102/foodtrucks-web to DockerHub. (Because you changed 
+the Docker image name to "mrki102/foodtrucks-web", the corresponding repo should 
+be found on DockerHub.)
+(e.g., $ docker login)
+(e.g., $ docker push mrki102/foodtrucks-web)
+
+- Check your published image on DockerHub
+(https://hub.docker.com/repository/docker/mrki102/foodtrucks-web)
+
+- Now you can run "docker-compose up" at ($ cd FoodTrucks).
+(e.g., $ docker-compose up)
+
+- Head over to the IP to see your app live (http://0.0.0.0:5000/)
+> Just a few lines of configuration and you have two Docker containers running 
+successfully in unison.
+
+- Stop the services and re-run in detached mode.
+(e.g., $ docker-compose up -d)
+
+- Confirm the currently running docker-compose services
+(e.g., $ docker-compose ps)
+
+- Names are automatically created by Docker Compose. But does Docker Compose 
+also create the network automatically? You can find out.
+
+- First, stop the services from running. (Data volumes are set in the 
+"docker-compose.yml" file, so it's possible to start the cluster again with the 
+same data using docker-compose up.) Destroy the cluster and the data voluems.
+(e.g., $ docker-compose down -v)
+
+- Also remove the "foodtrucks" network you created last time.
+(e.g., $ docker network rm foodtrucks-net)
+
+- Now that you have a clean slate, re-run your services and see if Docker 
+Compose works even when there is no user-defined bridge network.
+(e.g., $ docker-compose up -d)
+
+- Check to see if the cluster service containers were created.
+(e.g., $ docker container ls / $ docker ps)
+
+- Check to See if any netowrks were created.
+(e.g., $ docker network ls)
+
+- You can confirm that Docker Compose went ahead and created a new network 
+called "foodtrucks_default" and attached both the new services in that network 
+so that each of these are discoverable to the other. (Each container for a 
+service joins the default network and is both reachable by other containers on 
+that network, and discoverable by them at a hostname identical to the container 
+name.)
+(e.g., $ docker network inspect foodtrucks_default)
+
+
+# <Development Workflow>
 

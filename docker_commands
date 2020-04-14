@@ -79,4 +79,30 @@ $ docker network inspect {IP name}
 
 $ docker network create {newwork name - you define}
 : To create a new isolated bridge network
-(e.g., docker network create foodtrucks-net)
+(e.g., $ docker network create foodtrucks-net)
+
+$ docker netork rm {network name}
+: To remove a network
+(e.g., $ docker network rm foodtrucks-net)
+
+--------------------------------------------------------------------------------
+
+$ docker-compose --version
+: To check the version of docker-compose
+
+$ docker-compose up
+: To run docker-compose
+
+$ docker-compose up -d
+: To run docker-compose in detached mode
+
+$ docker-compose stop
+: To stop docker-compose from running
+
+$ docker-compose ps
+: To check the currently running docker-compose services
+
+$ docker-compose down -v
+: To destroy the docker-compose cluster and the data voluems.
+
+
