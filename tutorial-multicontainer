@@ -378,5 +378,77 @@ name.)
 (e.g., $ docker network inspect foodtrucks_default)
 
 
-# <Development Workflow>
 
+# <Development Workflow>
+You can configure Docker Compose to make your lives easier during devleopment.
+How does the workflow look during development? Is one supposed to keep creating 
+Docker images for every change, then publish it and then run it to see if the 
+changes work as expected? There has to be a better way. You can see how you can 
+make a change in the Foodtrucks app you just ran.
+
+- Make sure you have the app running.
+(e.g., $ docker container ls)
+
+- See if you can change this app to display a "Hello world!" message when a 
+request is made to "/hello" route. Currently, the app responds with a "404 NOT 
+FOUND".
+(e.g., $ curl -I 0.0.0.0:5000/hello)
+
+- Why does this happen? Since your app is a Flask app, you can see "app.py" for 
+answers. In Flask, routes are defined with "@app.route" syntax. In the "app.py" 
+file, there are only three routes defined - "/", "/debug", "/search". The "/" 
+route randers the main app, the "debug" route is used to return some debug 
+information and finally "search" is used by the app to query elasticsearch.
+Therefore, to make the app responds to "/hello", you can make the following 
+change to "app.py".
+(above "@app.route('/debug')")
+-------------------------
+# add a new hallo route
+@ app.route('/hello')
+def hello():
+    return "hello world!"
+-------------------------
+
+- Since Docker is running your containers based off the mrki102/foodtrucks-web 
+image, it doesn't know about this change. To validate this, try the following.
+(e.g., $ docker-compose run web bash)
+(.../flask-app# ls)
+(.../flask-app# grep hello app.py)
+(.../flask-app# exit)
+
+- That was to validate that your changes are not in the "app.py" that's running 
+in the container. We do this by running the command "docker-compose run" with 
+additional arguments for the service which is "web" in your case. As soons as 
+you run "bash", the shell opens in "/opt/flask-app" as specified in your 
+Dockerfile. From the grep command you can see that your changes are not in the 
+file. (But changes appeared in your case. Let's assume it didn't)
+
+- To fix it, you need to tell docker compose to not use the image and instead 
+use the files locally. You will also set debug mode to "true" so that Flask 
+knows to reload the server when "app.py" changes. Replace the "web" portion of 
+the "docker-compose.yml" file (cd FoodTrucks) like the following.
+---------------------BEFORE---------------------
+web:
+    image: mrki102/foodtrucks-web
+    command: python app.py
+    depends_on:
+        - es
+    ports:
+        - 5000:5000
+    volumes:
+        - ./flask-app:/opt/flask-app
+----------------------AFTER---------------------
+web:
+    build: . # replaced image with build
+    command: python app.py
+    environment:
+        - DEBUG=True  # set an env var for flask
+    depends_on:
+        - es
+    ports:
+        - "5000:5000"
+    volumes:
+        - ./flask-app:/opt/flask-app
+------------------------------------------------
+
+With that changes, stop and restart the 

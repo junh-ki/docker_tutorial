@@ -11,6 +11,10 @@ $ docker pull {image}
 : To fetch {image} from the Docker registry and saves it to your system.
 (e.g., $ docker pull busybox)
 
+$ docker build -t {image name} .
+: To build a Docker Image. 
+(e.g., $ docker build -t mrki102/catnip .)
+
 $ docker images
 : To see a list of all images on your system.
 
@@ -105,4 +109,5 @@ $ docker-compose ps
 $ docker-compose down -v
 : To destroy the docker-compose cluster and the data voluems.
 
-
+$ docker-compose run web bash
+: To validate that changes are not in the app that is running in the containe

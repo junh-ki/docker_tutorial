@@ -134,7 +134,7 @@ the name of the image to your image's name (e.g., "mrki102/catnip").
 first-time setup)
 
 * About "Dockerrun.aws.json"
-This file is basically an AWS specific file that tells EB details about our 
+This file is basically an AWS specific file that tells EB details about your 
 application and docker configuration.
 -------------------------------
 {
