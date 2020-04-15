@@ -402,12 +402,12 @@ information and finally "search" is used by the app to query elasticsearch.
 Therefore, to make the app responds to "/hello", you can make the following 
 change to "app.py".
 (above "@app.route('/debug')")
--------------------------
+---------------------------
 # add a new hallo route
-@ app.route('/hello')
+@app.route('/hello')
 def hello():
-    return "hello world!"
--------------------------
+    return "hello world!\n"
+---------------------------
 
 - Since Docker is running your containers based off the mrki102/foodtrucks-web 
 image, it doesn't know about this change. To validate this, try the following.
@@ -434,7 +434,7 @@ web:
     depends_on:
         - es
     ports:
-        - 5000:5000
+        - "5000:5000"
     volumes:
         - ./flask-app:/opt/flask-app
 ----------------------AFTER---------------------
@@ -451,4 +451,15 @@ web:
         - ./flask-app:/opt/flask-app
 ------------------------------------------------
 
-With that changes, stop and restart the 
+- With that changes, stop and restart the containers.
+(e.g., $ docker-compose down -v)
+(e.g., $ docker-compose up -d)
+
+- Try the same. 
+(e.g., $ curl 0.0.0.0:5000/hello)
+
+- At first few moments, it is possible to return the following message.
+(e.g., "curl: (52) Empty reply from server")
+
+- But later, you can confirm the expected following message. So wait!
+(e.g., "hello world!")
