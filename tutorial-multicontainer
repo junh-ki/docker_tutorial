@@ -477,6 +477,7 @@ automatically provisions the cluster on ECS. Since you already have a
 functioning "docker-compose.yml", it should not take a lot of effort in getting 
 up and running on AWS.
 
+------------------------------ECS-CLI-Installation------------------------------
 - Install CLI.
 (e.g., sudo curl -o /usr/local/bin/ecs-cli https://amazon-ecs-cli.s3.amazonaws.
 com/ecs-cli-linux-amd64-latest)
@@ -490,5 +491,22 @@ ecs-cli-linux-amd64-latest.md5) /usr/local/bin/ecs-cli" | md5sum -c -)
 
 - Complete the installation by Verifying that the CLI is working properly.
 (e.g., $ ecs-cli --version)
+--------------------------------------------------------------------------------
 
-- 
+- The first step is to get a keypair which you will be using to log into the 
+instances. To do this, head over to your AWS EC2 Console and create a new 
+keypair. Name your key -"ecs" and set your region as "us-east-2" (your ECS 
+Console's location currently seem to be Ohio (us-east-2)). This is what you'll 
+assume for the rest of this walkthrough. Download the keypair and store it in a 
+safe location.
+
+- The next step is to configure the CLI.
+(e.g., $ ecs-cli configure --region us-east-2 --cluster foodtrucks)
+You provice the "configure" command with the region name you want your cluster 
+to reside in and a cluster name. Make sure you provide the same region name that 
+you used when creating the keypair.
+
+- The next step enables the CLI to create a CloudFormation template.
+(e.g., $ ecs-cli up --keypair ecs --capability-iam --size 2 --instance-type 
+t2.micro) -> it doesn't work.
+(https://github.com/prakhar1989/docker-curriculum/issues/163)
