@@ -463,3 +463,32 @@ web:
 
 - But later, you can confirm the expected following message. So wait!
 (e.g., "hello world!")
+
+
+
+<AWS Elastic Container Service>
+You alread got a primer on deploying single container apps with Elastic 
+Beanstalk. Here you are going to look at Elastic Container Service (ECS) by AWS.
+Where Elastic Beanstalk came with reasonable defaults, ECS allows you to 
+completely tune your environment as per your needs.
+
+ECS has a friendly CLI tool that understands Docker Compose files and 
+automatically provisions the cluster on ECS. Since you already have a 
+functioning "docker-compose.yml", it should not take a lot of effort in getting 
+up and running on AWS.
+
+- Install CLI.
+(e.g., sudo curl -o /usr/local/bin/ecs-cli https://amazon-ecs-cli.s3.amazonaws.
+com/ecs-cli-linux-amd64-latest)
+
+- Verify the downloaded binary with the MD5 sum provided.
+(e.g., echo "$(curl -s https://amazon-ecs-cli.s3.amazonaws.com/
+ecs-cli-linux-amd64-latest.md5) /usr/local/bin/ecs-cli" | md5sum -c -)
+
+- Apply execute permissions to the binary.
+(e.g., sudo chmod +x /usr/local/bin/ecs-cli)
+
+- Complete the installation by Verifying that the CLI is working properly.
+(e.g., $ ecs-cli --version)
+
+- 
