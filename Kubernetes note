@@ -1,0 +1,31 @@
+Even though containers are scalable they are not easily scalable.
+It is important that they are managable when they are scaled up.
+
+Kuberenetes is a container management tool which automates container deployment, 
+container (de)scaling & container load balancing.
+
+You can group a number of containers into one logical unit for managing and 
+deploying an application or a particular service.
+
+Since you will be using a lot of docker containers as part of your production,
+you will also have to use Kubernetes which will be managing your multiple docker 
+containers.
+
+Kubernetes also does load balancing.
+
+*In computing, load balancing refers to the process of distributing a set of 
+tasks over a set of resources, with the aim of making their overall processing 
+more efficient.
+
+*Docker is a containerization platform and Kubernetes is a container management 
+platform, and Kubernetes is not for applications with a simple architecture.
+
+*Kubernetes Master controls the cluster; and the nodes in it.
+*Nodes host the containers inside them; Containers are inside separate PODS.
+*PODS are logical collection of containers which need to interact with each 
+other for an Application.
+
+*Replication Controller is Master's resource to ensure that requested number of 
+pods are running on nodes always.
+*Service is an object on Master that provides load balancing across a replicated 
+group of PODS.
