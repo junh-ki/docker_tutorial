@@ -1,0 +1,40 @@
+---------- A. Create a Cluster ----------
+
+1. Minikube version
+$ minikube version
+
+2. Start the cluster
+$ minikube start
+=> Minikube started a virtual machine for you, and a Kubernetes cluster is now running in that VM
+
+3. See both the version of the client and as well as the server
+$ kubectl version
+=> The client version is the kubectl version, the server version is the Kubernetes version installed on the master.
+
+4. View the cluster details
+$ kubectl cluster-info
+=> address info (Kubernetes master, KubeDNS)
+
+5. View the nodes in the closter
+$ kubectl get nodes
+=> status: ready - it is ready to accept applications for deployment
+
+---------- B. Deploy an App ----------
+
+
+
+---------- C. Explore Your App ----------
+
+
+
+---------- D. Expose Your App Publicly ----------
+
+
+
+---------- E. Scale Your App ----------
+
+
+
+---------- F. Update Your App ----------
+
+
