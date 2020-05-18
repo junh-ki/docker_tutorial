@@ -19,16 +19,116 @@ $ kubectl cluster-info
 $ kubectl get nodes
 => status: ready - it is ready to accept applications for deployment
 
+
+
+
 ---------- B. Deploy an App ----------
+
+1. Check that kubectl is configured to talk to your cluster
+$ kubectl version
+
+2. To view the nodes in the cluster
+$ kubectl get nodes
+=> Kubernetes will choose where to deploy our application based on Node available resources.
+
+3. To deploy your first app on Kubernetes with the 'kubectl create deployment' command,
+you need to provide the deployment name and app image location (include the full repository url for images hosted outside Docker hub).
+e.g.)
+$ kubectl create deployment kubernetes-bootcamp --image=gcr.io/google-samples/kubernetes-bootcamp:v1
+=> This performed a few things for you.
+- searched for a suitable node where an instance of the application could be run (you can see available nodes with: kubectl get nodes)
+- scheduled the application to run on that Node
+- configured the cluster to reschedule the instance on a new Node when needed
+
+4. To list your deployments
+$ kubectl get deployments
+=> See that there is 1 deployment running a single instance of your app. The instance is running inside a Docker container on your node.
+
+* We will cover other options on how to expose your application outside the kubernetes cluster in Module 4.
+
+5. Open a second terminal window to run the proxy (The kubectl command can create a proxy that will forward communications into the cluster-wide, private network. The proxy can be terminated by pressing control-C and won't show any output while its running.)
+$ echo -e "\n\n\n\e[92mStarting Proxy. After starting it will not output a response. Please click the first Terminal Tab\n";
+=> We now have a connection between our host (the online terminal) and the Kubernetes cluster. The proxy enables direct access to the API from these terminals.
+
+6. You can see all those APIs hosted through the proxy endpoint. For example, we can query the version directly through the API using the curl command:
+$ curl http://localhost:8001/version
+(* If Port 8001 is not accessible, ensure that the kubectl proxy started above is running.)
+(The proxy still runs in the second tab, and this allowed our curl command to work using localhost:8001.)
+
+7. The API server will automatically create an endpoint for each pod, based on the pod name, that is also accessible through the proxy.
+First we need to get the Pod name, and we'll store in the environment variable POD_NAME:
+$ export POD_NAME=$(kubectl get pods -o go-template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}')
+(* A Kubernetes pod is a group of containers that are deployed together on the same host. If you frequently deploy single containers, you can generally replace the word "pod" with "container" and accurately understand the concept.)
+
+In order for the new deployment to be accessible without using the Proxy, a Service is required which will be explained in the next modules.
+
 
 
 
 ---------- C. Explore Your App ----------
 
+A Pod models an application-specific "logical host" and can contain different application containers which are relatively tightly coupled. For example, a Pod might include both the container with your Node.js app as well as a different container that feeds the data to be published by the Node.js webserver.
+When we create a Deployment on Kubernetes, that Deployment creates Pods with containers inside them (as opposed to creating containers directly).
+Each Pod is tied to the Node where it is scheduled, and remains there until termination (according to restart policy) or deletion. In case of a Node failure, identical Pods are scheduled on other available Nodes in the cluster.
+
+A Pod always runs on a Node. A Node is a worker machine in Kubernetes and may be either a virtual or a physical machine, depending on the cluster. Each Node is managed by the Master. A Node can have multiple pods, and the Kubernetes master automatically handles scheduling the pods across the Nodes in the cluster. The Master's automatic scheduling takes into account the available resources on each Node.
+Every Kubernetes Node runs at least:
+- Kubelet, a process responsible for communication between the Kubernetes Master and the Node; it manages the Pods and the containers running on a machine.
+- A container runtime (like Docker, rkt) responsible for pulling the container image from a registry, unpacking the container, and running the application.
+Containers should only be scheduled together in a single Pod if they are tightly coupled and need to share resources such as disk.
+
+In Module 2, you used Kubectl command-line interface. You'll continue to use it in Module 3 to get information about deployed applications and their environments. The most common operations can be done with the following kubectl commands:
+$ kubectl get => list resources
+$ kubectl describe => show detailed information about a resource
+$ kubectl logs => print the logs from a container in a pod
+$ kubectl exec => execute a command on a container in a pod
+
+
+
+1. To look for existing pods
+$ kubectl get pods
+
+2. To view what containers are inside that Pod and what images are used to build those containers
+$ kubectl describe pods
+
+3. Recall that Pods are running in an isolated, private network - so we need to proxy access to them so we can debug and interact with them. To do this, we'll use the kubectl proxy command to run a proxy in a second terminal window. Click on the command below to automatically open a new terminal and run the proxy:
+$ echo -e "\n\n\n\e[92mStarting Proxy. After starting it will not output a response. Please click the first Terminal Tab\n"; kubectl proxy
+
+4. Now again, we'll get the Pod name and query that pod directly through the proxy. To get the Pod name and store it in the POD_NAME environment variable:
+$ export POD_NAME=$(kubectl get pods -o go-template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}')
+$ echo Name of the Pod: $POD_NAME
+
+5. To see the output of our application, run a curl request.
+$ curl http://localhost:8001/api/v1/namespaces/default/pods/$POD_NAME/proxy/
+=> The url is the route to the API of the Pod.
+
+6. Anything that the application would normally send to STDOUT becomes logs for the container within the Pod. We can retrieve these logs using the kubectl logs command:
+$ kubectl logs $POD_NAME
+(Note: We don’t need to specify the container name here, because we only have one container inside the pod.)
+
+7. We can execute commands directly on the container once the Pod is up and running. For this, we use the exec command and use the name of the Pod as a parameter. Let’s list the environment variables:
+$ kubectl exec $POD_NAME env
+(Again, worth mentioning that the name of the container itself can be omitted since we only have a single container in the Pod.)
+
+8. Next let’s start a bash session in the Pod’s container:
+$ kubectl exec -ti $POD_NAME bash
+
+9. We have now an open console on the container where we run our NodeJS application. The source code of the app is in the server.js file:
+$ cat server.js
+
+10. You can check that the application is up by running a curl command:
+$ curl localhost:8080
+(Note: here we used localhost because we executed the command inside the NodeJS Pod. If you cannot connect to localhost:8080, check to make sure you have run the kubectl exec command and are launching the command from within the Pod)
+
+11. To close your container connection type:
+$ exit
+
+
 
 
 ---------- D. Expose Your App Publicly ----------
 
+(to be continued...)
 
 
 ---------- E. Scale Your App ----------
