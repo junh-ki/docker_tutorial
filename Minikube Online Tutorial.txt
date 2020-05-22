@@ -221,11 +221,74 @@ Scaling is accomplished by changing the number of replicas in a Deployment.
 Scaling out a Deployment will ensure new Pods are created and scheduled to Nodes with available resources. Scaling will increase the number of Pods to the new desired state.
 Running multiple instances of an application will require a way to distribute the traffic to all of them. Services have an integrated load-balancer that will distribute network traffic to all Pods of an exposed Deployment. Services will monitor continuously the running Pods using endpoints, to ensure the traffic is sent only to available Pods.
 
-(To be continued...)
+1. To list your deployments
+$ kubectl get deployments
+
+2. To see the ReplicaSet created by the Deployment
+$ kubectl get rs
+=> Notice that the name of the ReplicaSet is always formatted as [DEPLOYMENT-NAME]-[RANDOM-STRING].
+DESIRED displays the desired number of replicas of the application, which you define when you create the Deployment. This is the desired state.
+CURRENT displays how many replicas are currently running.
+
+3. To scale the Deployment to 4 replicas.
+$ kubectl scale deployments/kubernetes-bootcamp --replicas=4
+=> the kubectl scale command, followed by the deployment type, name and desired number of instances
+
+4. To list your Deployments once again
+$ kubectl get deployments
+=> The change was applied, and we have 4 instances of the application available.
+
+5. To check if the number of Pods changed:
+$ kubectl get pods -o wide
+=> There are 4 Pods now, with different IP addresses. The change was registered in the Deployment events log.
+
+6. To check the registered change, use the describe command:
+$ kubectl describe deployments/kubernetes-bootcamp
+=> You can also view in the output of this command that there are 4 replicas now.
+
+7. Let’s check that the Service is load-balancing the traffic. To find out the exposed IP and Port we can use the describe service as we learned in the previously Module:
+$ kubectl describe services/kubernetes-bootcamp
+
+8. Create an environment variable called NODE_PORT that has a value as the Node port:
+$ export NODE_PORT=$(kubectl get services/kubernetes-bootcamp -o go-template='{{(index .spec.ports 0).nodePort}}')
+$ echo NODE_PORT=$NODE_PORT
+
+9. Next, we’ll do a curl to the exposed IP and port. Execute the command multiple times:
+$ curl $(minikube ip):$NODE_PORT
+=> We hit a different Pod with every request. This demonstrates that the load-balancing is working.
+
+10. To scale down the Service to 2 replicas, run again the scale command:
+$ kubectl scale deployments/kubernetes-bootcamp --replicas=2
+
+11. To list the Deployments to check if the change was applied:
+$ kubectl get deployments
+=> The number of replicas decreased to 2.
+
+12. To list the number of Pods:
+$ kubectl get pods -o wide
+=> This confirms that 2 Pods were terminated.
 
 
 
 
 ---------- F. Update Your App ----------
 
+Rolling updates allow Deployments' update to take place with zero downtime by incrementally updating Pods instances with new ones. The new Pods will be scheduled on Nodes with available resources.
+By default, the maximum number of Pods that can be unavailable during the update and the maximum number of new Pods that can be created, is one. Both options can be configured to either numbers or percentages (of Pods). In Kubernetes, updates are versioned and any Deployment update can be reverted to a previous (stable) version.
+Similar to application Scaling, if a Deployment is exposed publicly, the Service will load-balance the traffic only to available Pods during the update. An available Pod is an instance that is available to the users of the application.
+Rolling updates allow the following actions:
+- Promote an application from one environment to another (via container image updates)
+- Rollback to previous versions
+- Continuous Integration and Continuous Delivery of applications with zero downtime
+
+1. To list your deployments:
+$ kubectl get deployments
+
+2. To list the running Pods:
+$ kubectl get pods
+
+(To be continued...)
+
+3. To view the current image version of the app, run a describe command against the Pods (look at the Image field)
+$ kubectl describe pods
 
